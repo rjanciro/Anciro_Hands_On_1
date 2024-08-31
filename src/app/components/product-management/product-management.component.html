@@ -1,0 +1,92 @@
+<!-- src/app/products/products.component.html -->
+<div class="container">
+  <h1>Product Management</h1>
+  
+  <div class="controls-container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="limit">Show:</label>
+        <select id="limit" (change)="onLimitChange($event)" class="styled-select">
+          <option value="5">5 items</option>
+          <option value="10" selected>10 items</option>
+          <option value="20">20 items</option>
+          <option value="50">50 items</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="sort">Sort:</label>
+        <select id="sort" (change)="onSortChange($event)" class="styled-select">
+          <option value="">None</option>
+          <option value="price">Price (Low to High)</option>
+          <option value="-price">Price (High to Low)</option>
+          <option value="title">Title (A-Z)</option>
+          <option value="-title">Title (Z-A)</option>
+          <option value="category">Category (A-Z)</option>
+          <option value="-category">Category (Z-A)</option>
+        </select>
+      </div>
+    </div>
+    <div class="button-container">
+      <button (click)="openModal()" class="btn btn-primary">Add a new Product</button>
+    </div>
+  </div>
+
+  <div class="product-grid">
+    <div *ngFor="let product of products" class="product-card">
+      <img [src]="product.image" [alt]="product.title" class="product-image" (click)="openImageModal(product)">
+      <div class="product-info">
+        <h3 class="product-title">{{ product.title }}</h3>
+        <span class="product-category">{{ product.category }}</span>
+      </div>
+      <p class="product-price">{{ product.price | currency }}</p>
+      <div class="product-actions">
+        <button (click)="viewProduct(product)" class="btn btn-info">View</button>
+        <button (click)="editProduct(product)" class="btn btn-secondary">Edit</button>
+        <button (click)="deleteProduct(product.id)" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Form Modal -->
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+      <input formControlName="title" placeholder="Title" class="form-input">
+      <input formControlName="price" type="number" placeholder="Price" class="form-input">
+      <textarea formControlName="description" placeholder="Description" class="form-input"></textarea>
+      <input formControlName="category" placeholder="Category" class="form-input">
+      <input formControlName="image" placeholder="Image URL" class="form-input">
+      <button type="submit" [disabled]="!productForm.valid" class="btn btn-primary">Save Product</button>
+    </form>
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal image-modal" *ngIf="selectedImage">
+  <div class="modal-content">
+    <span class="close" (click)="closeImageModal()">&times;</span>
+    <img [src]="selectedImage" alt="Product Image" class="full-size-image">
+  </div>
+</div>
+
+<div *ngIf="product.id" class="selected-product">
+  <h3>Selected Product</h3>
+  <img [src]="product.image" alt="{{ product.title }}" class="product-image">
+  <p>Title: {{ product.title }}</p>
+  <p>Description: {{ product.description }}</p>
+  <p>Price: {{ product.price | currency }}</p>
+  <p>Category: {{ product.category }}</p>
+</div>
+
+<!-- Product View Modal -->
+<div class="modal" *ngIf="selectedProduct">
+  <div class="modal-content">
+    <span class="close" (click)="closeViewModal()">&times;</span>
+    <h2>{{ selectedProduct.title }}</h2>
+    <p><strong>Price:</strong> {{ selectedProduct.price | currency }}</p>
+    <p><strong>Category:</strong> {{ selectedProduct.category }}</p>
+    <p><strong>Description:</strong> {{ selectedProduct.description }}</p>
+  </div>
+</div>
